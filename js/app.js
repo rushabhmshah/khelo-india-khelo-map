@@ -217,7 +217,11 @@
 
   async function load() {
     if (DEMO) {
-      members = [...window.KIK_DEMO_MEMBERS, ...(store.get("kik-demo-added") || [])];
+      // Sample members are only fetched in demo mode, so the live site never ships them.
+      if (!window.KIK_DEMO_MEMBERS) {
+        await new Promise((done) => { const s = document.createElement("script"); s.src = "js/demo-data.js"; s.onload = s.onerror = done; document.head.append(s); });
+      }
+      members = [...(window.KIK_DEMO_MEMBERS || []), ...(store.get("kik-demo-added") || [])];
     } else {
       try {
         let full = null;
